@@ -1,0 +1,32 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.jsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "webpack": "webpack --mode=development --watch",
+    "display-errors": "webpack --display-error-details"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TrevorA-TrevorA/calculator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TrevorA-TrevorA/calculator/issues"
+  },
+  "homepage": "https://github.com/TrevorA-TrevorA/calculator#readme",
+  "dependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
+    "@babel/preset-react": "^7.12.10",
+    "babel-loader": "^8.2.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "webpack": "^5.10.1",
+    "webpack-cli": "^4.2.0"
+  }
+}
