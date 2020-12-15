@@ -34,6 +34,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -78,6 +90,7 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     _this.subtract = _this.subtract.bind(_assertThisInitialized(_this));
     _this.multiply = _this.multiply.bind(_assertThisInitialized(_this));
     _this.divide = _this.divide.bind(_assertThisInitialized(_this));
+    _this.clear = _this.clear.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -85,10 +98,14 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     key: "add",
     value: function add(e) {
       e.preventDefault();
-      var _ref = [this.state.num1, this.state.num2],
-          num1 = _ref[0],
-          num2 = _ref[1];
-      if (isNaN(num1) || isNaN(num1)) return;
+      var nums = [this.state.num1, this.state.num2].map(function (n) {
+        return parseFloat(n);
+      });
+
+      var _nums = _slicedToArray(nums, 2),
+          num1 = _nums[0],
+          num2 = _nums[1];
+
       var result = num1 + num2;
       this.setState({
         result: result
@@ -98,9 +115,14 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     key: "subtract",
     value: function subtract(e) {
       e.preventDefault();
-      var _ref2 = [this.state.num1, this.state.num2],
-          num1 = _ref2[0],
-          num2 = _ref2[1];
+      var nums = [this.state.num1, this.state.num2].map(function (n) {
+        return parseFloat(n);
+      });
+
+      var _nums2 = _slicedToArray(nums, 2),
+          num1 = _nums2[0],
+          num2 = _nums2[1];
+
       if (isNaN(num1) || isNaN(num2)) return;
       var result = num1 - num2;
       this.setState({
@@ -111,9 +133,14 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     key: "multiply",
     value: function multiply(e) {
       e.preventDefault();
-      var _ref3 = [this.state.num1, this.state.num2],
-          num1 = _ref3[0],
-          num2 = _ref3[1];
+      var nums = [this.state.num1, this.state.num2].map(function (n) {
+        return parseFloat(n);
+      });
+
+      var _nums3 = _slicedToArray(nums, 2),
+          num1 = _nums3[0],
+          num2 = _nums3[1];
+
       if (isNaN(num1) || isNaN(num1)) return;
       var result = num1 * num2;
       this.setState({
@@ -124,9 +151,14 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     key: "divide",
     value: function divide(e) {
       e.preventDefault();
-      var _ref4 = [this.state.num1, this.state.num2],
-          num1 = _ref4[0],
-          num2 = _ref4[1];
+      var nums = [this.state.num1, this.state.num2].map(function (n) {
+        return parseFloat(n);
+      });
+
+      var _nums4 = _slicedToArray(nums, 2),
+          num1 = _nums4[0],
+          num2 = _nums4[1];
+
       if (isNaN(num1) || isNaN(num1)) return;
       var result = num1 / num2;
       this.setState({
@@ -134,11 +166,30 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
+    key: "clear",
+    value: function clear(e) {
+      e.preventDefault;
+      this.setState({
+        result: 0,
+        num1: '',
+        num2: ''
+      });
+    }
+  }, {
     key: "setNum1",
     value: function setNum1(e) {
       e.preventDefault();
+      var newVal;
       var input = document.querySelector("#num1").value;
-      var newVal = input === '' || isNaN(input) ? '' : parseFloat(input);
+
+      if (input === undefined) {
+        newVal = '';
+      } else if (isNaN(input)) {
+        return;
+      } else {
+        newVal = input;
+      }
+
       this.setState({
         num1: newVal
       });
@@ -147,8 +198,17 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     key: "setNum2",
     value: function setNum2(e) {
       e.preventDefault();
+      var newVal;
       var input = document.querySelector("#num2").value;
-      var newVal = input === '' || isNaN(input) ? '' : parseFloat(input);
+
+      if (input === undefined) {
+        newVal = '';
+      } else if (isNaN(input)) {
+        return;
+      } else {
+        newVal = input;
+      }
+
       this.setState({
         num2: newVal
       });
@@ -156,17 +216,21 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
+      var _this$state = this.state,
+          result = _this$state.result,
+          num1 = _this$state.num1,
+          num2 = _this$state.num2;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         id: "num1",
         type: "text",
-        value: this.state.num1,
+        value: num1,
         onChange: this.setNum1
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         id: "num2",
         type: "text",
-        value: this.state.num2,
+        value: num2,
         onChange: this.setNum2
-      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+      }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         onClick: this.add
       }, "+"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         onClick: this.subtract
@@ -174,7 +238,9 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
         onClick: this.multiply
       }, "x"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
         onClick: this.divide
-      }, "/"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, this.state.result));
+      }, "/"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        onClick: this.clear
+      }, "CLR"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, result));
     }
   }]);
 
