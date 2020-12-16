@@ -79,79 +79,52 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     _this.calculate = _this.calculate.bind(_assertThisInitialized(_this));
     _this.setNumber = _this.setNumber.bind(_assertThisInitialized(_this));
     _this.clear = _this.clear.bind(_assertThisInitialized(_this));
+    _this.operations = [_this.add.bind(_assertThisInitialized(_this)), _this.subtract.bind(_assertThisInitialized(_this)), _this.multiply.bind(_assertThisInitialized(_this)), _this.divide.bind(_assertThisInitialized(_this))];
+    _this.indexKey = {
+      add: 0,
+      subtract: 1,
+      multiply: 2,
+      divide: 3
+    };
     return _this;
   }
 
   _createClass(Calculator, [{
     key: "add",
-    value: function add() {
-      var acc = this.state.accumulator;
-      var num = parseFloat(this.state.number);
-      var newVal = acc + num;
-      return newVal;
+    value: function add(acc, num) {
+      return acc + num;
     }
   }, {
     key: "subtract",
-    value: function subtract() {
-      var acc = this.state.accumulator;
-      var num = parseFloat(this.state.number);
-      var newVal = acc - num;
-      return newVal;
+    value: function subtract(acc, num) {
+      return acc - num;
     }
   }, {
     key: "multiply",
-    value: function multiply() {
-      var acc = this.state.accumulator;
-      var num = parseFloat(this.state.number);
-      var newVal = acc * num;
-      return newVal;
+    value: function multiply(acc, num) {
+      return acc * num;
     }
   }, {
     key: "divide",
-    value: function divide() {
-      var acc = this.state.accumulator;
-      var num = parseFloat(this.state.number);
-      var newVal = acc / num;
-      return newVal;
+    value: function divide(acc, num) {
+      return acc / num;
     }
   }, {
     key: "setOperation",
     value: function setOperation(e) {
       this.setState({
+        operation: e.target.id,
         display: ''
       });
-      var op = e.target.id;
-
-      switch (op) {
-        case 'add':
-          this.setState({
-            operation: this.add.bind(this)
-          });
-          break;
-
-        case 'subtract':
-          this.setState({
-            operation: this.subtract.bind(this)
-          });
-          break;
-
-        case 'multiply':
-          this.setState({
-            operation: this.multiply.bind(this)
-          });
-          break;
-
-        case 'divide':
-          this.setState({
-            operation: this.divide.bind(this)
-          });
-          break;
-      }
     }
   }, {
     key: "calculate",
     value: function calculate() {
-      var newAcc = this.state.operation();
+      var acc = this.state.accumulator;
+      var num = parseFloat(this.state.number);
+      var opIdx = this.indexKey[this.state.operation];
+      var operation = this.operations[opIdx];
+      var newAcc = operation(acc, num);
       this.setState({
         accumulator: newAcc,
         display: newAcc

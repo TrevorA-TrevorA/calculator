@@ -14,58 +14,41 @@ class Calculator extends React.Component {
     this.calculate = this.calculate.bind(this);
     this.setNumber = this.setNumber.bind(this);
     this.clear = this.clear.bind(this);
+    this.operations = [
+      this.add.bind(this),
+      this.subtract.bind(this),
+      this.multiply.bind(this),
+      this.divide.bind(this)
+    ]
+    this.indexKey = { add: 0, subtract: 1, multiply: 2, divide: 3}
   }
 
-  add() {
-    const acc = this.state.accumulator;
-    const num = parseFloat(this.state.number);
-    let newVal = acc + num;
-    return newVal;
+  add(acc, num) {
+    return acc + num;
   }
 
-  subtract() {
-    const acc = this.state.accumulator;
-    const num = parseFloat(this.state.number);
-    let newVal = acc - num;
-    return newVal;
+  subtract(acc, num) {
+    return acc - num;
   }
 
-  multiply() {
-    const acc = this.state.accumulator;
-    const num = parseFloat(this.state.number);
-    let newVal = acc * num;
-    return newVal;
+  multiply(acc, num) {
+    return acc * num;
   }
 
-  divide() {
-    const acc = this.state.accumulator;
-    const num = parseFloat(this.state.number);
-    let newVal = acc / num;
-    return newVal;
+  divide(acc, num) {
+    return acc / num;
   }
 
   setOperation(e) {
-    this.setState({ display: '' })
-    const op = e.target.id
-
-    switch(op) {
-      case 'add':
-        this.setState({ operation: this.add.bind(this) })
-        break;
-      case 'subtract':
-        this.setState({ operation: this.subtract.bind(this) })
-        break;
-      case 'multiply':
-        this.setState({ operation: this.multiply.bind(this) })
-        break;
-      case 'divide':
-        this.setState({ operation: this.divide.bind(this) })
-        break;
-    }
+    this.setState({ operation: e.target.id, display: '' });
   }
 
   calculate() {
-    const newAcc = this.state.operation()
+    const acc = this.state.accumulator;
+    const num = parseFloat(this.state.number);
+    const opIdx = this.indexKey[this.state.operation]
+    const operation = this.operations[opIdx];
+    const newAcc = operation(acc, num)
     this.setState({ accumulator: newAcc, display: newAcc })
   }
 
