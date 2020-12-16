@@ -1,0 +1,46 @@
+html, head, body, div, input, button {
+  margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+}
+
+.calculator {
+  margin: auto;
+  border: 1px solid black;
+}
+
+.number_field {
+  width: 450px;
+  margin: auto;
+  border: 1px solid black;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 450px;
+  margin: auto;
+  border: 1px solid black;
+}
+
+.button {
+  height: 150px;
+  width: 150px;
+  border: 1px solid black;
+}
+
+.button:focus {
+  outline: 0;
+}
+
+.button:hover {
+  background-color: black;
+  color: white;
+}
+
+.number_field > input {
+  width: 450px;
+}

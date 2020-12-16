@@ -4,63 +4,79 @@ class Calculator extends React.Component {
   constructor(props) {
     super(props);
     this.state  = {
-      result: 0,
-      num1: "",
-      num2: ""
+      number: '',
+      accumulator: 0,
+      display: '',
+      operation: null
     }
-    this.setNum1 = this.setNum1.bind(this);
-    this.setNum2 = this.setNum2.bind(this);
-    this.add = this.add.bind(this);
-    this.subtract = this.subtract.bind(this);
-    this.multiply = this.multiply.bind(this);
-    this.divide = this.divide.bind(this);
+
+    this.setOperation = this.setOperation.bind(this);
+    this.calculate = this.calculate.bind(this);
+    this.setNumber = this.setNumber.bind(this);
     this.clear = this.clear.bind(this);
   }
 
-  add(e) {
-    e.preventDefault()
-    const nums = [this.state.num1, this.state.num2].map(n => parseFloat(n));
-    const [num1, num2] = nums;
-    const result = num1 + num2;
-    this.setState({ result: result })
+  add() {
+    const acc = this.state.accumulator;
+    const num = parseFloat(this.state.number);
+    let newVal = acc + num;
+    return newVal;
   }
 
-  subtract(e) {
-    e.preventDefault()
-    const nums = [this.state.num1, this.state.num2].map(n => parseFloat(n));
-    const [num1, num2] = nums;
-    if (isNaN(num1) || isNaN(num2)) return;
-    const result = num1 - num2;
-    this.setState({ result: result })
+  subtract() {
+    const acc = this.state.accumulator;
+    const num = parseFloat(this.state.number);
+    let newVal = acc - num;
+    return newVal;
   }
 
-  multiply(e) {
-    e.preventDefault()
-    const nums = [this.state.num1, this.state.num2].map(n => parseFloat(n));
-    const [num1, num2] = nums;
-    if (isNaN(num1) || isNaN(num1)) return;
-    const result = num1 * num2;
-    this.setState({ result: result })
+  multiply() {
+    const acc = this.state.accumulator;
+    const num = parseFloat(this.state.number);
+    let newVal = acc * num;
+    return newVal;
   }
 
-  divide(e) {
-    e.preventDefault()
-    const nums = [this.state.num1, this.state.num2].map(n => parseFloat(n));
-    const [num1, num2] = nums;
-    if (isNaN(num1) || isNaN(num1)) return;
-    const result = num1 / num2;
-    this.setState({ result: result })
+  divide() {
+    const acc = this.state.accumulator;
+    const num = parseFloat(this.state.number);
+    let newVal = acc / num;
+    return newVal;
   }
 
-  clear(e) {
-    e.preventDefault;
-    this.setState({result: 0, num1: '', num2: ''});
+  setOperation(e) {
+    this.setState({ display: '' })
+    const op = e.target.id
+
+    switch(op) {
+      case 'add':
+        this.setState({ operation: this.add.bind(this) })
+        break;
+      case 'subtract':
+        this.setState({ operation: this.subtract.bind(this) })
+        break;
+      case 'multiply':
+        this.setState({ operation: this.multiply.bind(this) })
+        break;
+      case 'divide':
+        this.setState({ operation: this.divide.bind(this) })
+        break;
+    }
   }
 
-  setNum1(e) {
+  calculate() {
+    const newAcc = this.state.operation()
+    this.setState({ accumulator: newAcc, display: newAcc })
+  }
+
+  clear() {
+    this.setState({number: 0, accumulator: 0, display: ''});
+  }
+
+  setNumber(e) {
     e.preventDefault()
+    const input = document.querySelector("#number-field").value;
     let newVal;
-    const input = document.querySelector("#num1").value;
 
     if (input === undefined) {
       newVal = '';
@@ -69,40 +85,29 @@ class Calculator extends React.Component {
     } else {
       newVal = input;
     }
-    
 
-    this.setState({ num1: newVal });
+    let acc = this.state.accumulator || parseFloat(newVal)
+    this.setState({ number: newVal, display: newVal, accumulator: acc })
   }
 
-  setNum2(e) {
-    e.preventDefault()
-    let newVal;
-    const input = document.querySelector("#num2").value
-
-    if (input === undefined) {
-      newVal = '';
-    } else if (isNaN(input)) {
-      return;
-    } else {
-      newVal = input;
-    }
-
-    this.setState({ num2: newVal });
-  }
 
   render() {
-    const { result, num1, num2 } = this.state;
+    const { number, accumulator } = this.state;
+
     return (
-      <div>
-        <input id="num1" type="text" value={num1} onChange={this.setNum1}/>
-        <input id="num2" type="text" value={num2} onChange={this.setNum2}/>
-        <br/>
-        <button onClick={this.add}>+</button>
-        <button onClick={this.subtract}>-</button>
-        <button onClick={this.multiply}>x</button>
-        <button onClick={this.divide}>/</button>
-        <button onClick={this.clear}>CLR</button>
-        <h1>{result}</h1>
+      <div className="calculator">
+        <div className="number_field">
+          <input id="number-field" type="text" value={this.state.display} onChange={this.setNumber}/>
+        </div>
+          <br/>
+        <div className="buttons" >
+          <button id="add" className="button" onClick={this.setOperation}>+</button>
+          <button id="subtract" className="button" onClick={this.setOperation}>-</button>
+          <button id="multiply" className="button" onClick={this.setOperation}>x</button>
+          <button id="divide" className="button" onClick={this.setOperation}>/</button>
+          <button className="button" onClick={this.clear}>CLR</button>
+          <button className="button" onClick={this.calculate}>=</button>
+        </div>
       </div>
     );
   }
