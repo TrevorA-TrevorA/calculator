@@ -77,8 +77,9 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
     };
     _this.setOperation = _this.setOperation.bind(_assertThisInitialized(_this));
     _this.calculate = _this.calculate.bind(_assertThisInitialized(_this));
-    _this.setNumber = _this.setNumber.bind(_assertThisInitialized(_this));
+    _this.calculated = false;
     _this.clear = _this.clear.bind(_assertThisInitialized(_this));
+    _this.bindKeys = _this.bindKeys.bind(_assertThisInitialized(_this));
     _this.operations = [_this.add.bind(_assertThisInitialized(_this)), _this.subtract.bind(_assertThisInitialized(_this)), _this.multiply.bind(_assertThisInitialized(_this)), _this.divide.bind(_assertThisInitialized(_this))];
     _this.indexKey = {
       add: 0,
@@ -112,54 +113,92 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
   }, {
     key: "setOperation",
     value: function setOperation(e) {
+      this.calculated = false;
+      var acc = this.state.accumulator || parseFloat(this.state.number);
       this.setState({
         operation: e.target.id,
-        display: ''
+        display: '',
+        accumulator: acc
       });
     }
   }, {
     key: "calculate",
     value: function calculate() {
+      if (this.state.operation === null) return;
       var acc = this.state.accumulator;
       var num = parseFloat(this.state.number);
       var opIdx = this.indexKey[this.state.operation];
       var operation = this.operations[opIdx];
       var newAcc = operation(acc, num);
+      this.calculated = true;
       this.setState({
         accumulator: newAcc,
-        display: newAcc
+        display: "".concat(newAcc)
       });
     }
   }, {
     key: "clear",
     value: function clear() {
       this.setState({
-        number: 0,
+        number: '',
         accumulator: 0,
         display: ''
       });
     }
   }, {
-    key: "setNumber",
-    value: function setNumber(e) {
+    key: "bindKeys",
+    value: function bindKeys(e) {
       e.preventDefault();
-      var input = document.querySelector("#number-field").value;
-      var newVal;
+      var buttons = Array.from(document.getElementsByClassName('button'));
 
-      if (input === undefined) {
-        newVal = '';
-      } else if (isNaN(input)) {
-        return;
-      } else {
-        newVal = input;
+      if (['=', '-', '+', '/'].includes(e.key)) {
+        var button = buttons.find(function (button) {
+          return button.innerHTML === e.key;
+        });
+        button.click();
       }
 
-      var acc = this.state.accumulator || parseFloat(newVal);
-      this.setState({
-        number: newVal,
-        display: newVal,
-        accumulator: acc
-      });
+      switch (e.key) {
+        case '*':
+          document.getElementById('multiply').click();
+          break;
+
+        case 'Enter':
+          document.getElementById('equals').click();
+          break;
+
+        case 'Backspace':
+          document.getElementById('clear').click();
+          break;
+
+        case '.':
+          if (this.state.display.includes('.')) return;
+          var newVal = this.calculated || !this.state.display ? '0.' : "".concat(this.state.display, ".");
+          var acc = this.calculated ? 0 : this.state.accumulator;
+          this.setState({
+            number: newVal,
+            display: newVal,
+            accumulator: acc
+          });
+          this.calculated = false;
+          return;
+      }
+
+      for (var n = 0; n < 10; n++) {
+        if ("".concat(n) === e.key) {
+          var _newVal = this.calculated ? "".concat(n) : "".concat(this.state.display).concat(n);
+
+          var _acc = this.calculated ? 0 : this.state.accumulator;
+
+          this.setState({
+            number: _newVal,
+            display: _newVal,
+            accumulator: _acc
+          });
+          this.calculated = false;
+          return;
+        }
+      }
     }
   }, {
     key: "render",
@@ -168,14 +207,16 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
           number = _this$state.number,
           accumulator = _this$state.accumulator;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        className: "calculator"
+        className: "calculator",
+        tabIndex: "0",
+        onKeyDown: this.bindKeys
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "number_field"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
         id: "number-field",
         type: "text",
-        value: this.state.display,
-        onChange: this.setNumber
+        readOnly: true,
+        value: this.state.display
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "buttons"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
@@ -195,9 +236,11 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
         className: "button",
         onClick: this.setOperation
       }, "/"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        id: "clear",
         className: "button",
         onClick: this.clear
       }, "CLR"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+        id: "equals",
         className: "button",
         onClick: this.calculate
       }, "=")));

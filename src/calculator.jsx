@@ -12,8 +12,9 @@ class Calculator extends React.Component {
 
     this.setOperation = this.setOperation.bind(this);
     this.calculate = this.calculate.bind(this);
-    this.setNumber = this.setNumber.bind(this);
+    this.calculated = false
     this.clear = this.clear.bind(this);
+    this.bindKeys = this.bindKeys.bind(this);
     this.operations = [
       this.add.bind(this),
       this.subtract.bind(this),
@@ -40,37 +41,64 @@ class Calculator extends React.Component {
   }
 
   setOperation(e) {
-    this.setState({ operation: e.target.id, display: '' });
+    this.calculated = false;
+    const acc = this.state.accumulator || parseFloat(this.state.number);
+    this.setState({ operation: e.target.id, display: '', accumulator: acc });
   }
 
   calculate() {
+    if (this.state.operation === null) return;
     const acc = this.state.accumulator;
     const num = parseFloat(this.state.number);
     const opIdx = this.indexKey[this.state.operation]
     const operation = this.operations[opIdx];
     const newAcc = operation(acc, num)
-    this.setState({ accumulator: newAcc, display: newAcc })
+    this.calculated = true;
+    this.setState({ accumulator: newAcc, display: `${newAcc}` })
   }
 
   clear() {
-    this.setState({number: 0, accumulator: 0, display: ''});
+    this.setState({number: '', accumulator: 0, display: ''});
   }
 
-  setNumber(e) {
-    e.preventDefault()
-    const input = document.querySelector("#number-field").value;
-    let newVal;
+  bindKeys(e) {
+    e.preventDefault();
 
-    if (input === undefined) {
-      newVal = '';
-    } else if (isNaN(input)) {
-      return;
-    } else {
-      newVal = input;
+    const buttons = Array.from(document.getElementsByClassName('button'))
+
+    if (['=','-','+','/'].includes(e.key)) {
+      const button = buttons.find(button => button.innerHTML === e.key);
+      button.click();
+    }
+   
+    switch(e.key) {
+      case '*':
+        document.getElementById('multiply').click();
+        break;
+      case 'Enter':
+        document.getElementById('equals').click();
+        break;
+      case 'Backspace':
+        document.getElementById('clear').click();
+        break;
+      case '.':
+        if (this.state.display.includes('.')) return;
+        const newVal = this.calculated || !this.state.display ? '0.' : `${this.state.display}.`
+        const acc = this.calculated ? 0 : this.state.accumulator;
+        this.setState({ number: newVal, display: newVal, accumulator: acc });
+        this.calculated = false;
+        return;
     }
 
-    let acc = this.state.accumulator || parseFloat(newVal)
-    this.setState({ number: newVal, display: newVal, accumulator: acc })
+    for (let n = 0; n < 10; n++) {
+      if (`${n}` === e.key) {
+        const newVal = this.calculated ? `${n}` : `${this.state.display}${n}`
+        const acc = this.calculated ? 0 : this.state.accumulator;
+        this.setState({ number: newVal, display: newVal, accumulator: acc });
+        this.calculated = false;
+        return;
+      }
+    }
   }
 
 
@@ -78,9 +106,9 @@ class Calculator extends React.Component {
     const { number, accumulator } = this.state;
 
     return (
-      <div className="calculator">
+      <div className="calculator" tabIndex="0" onKeyDown={this.bindKeys}>
         <div className="number_field">
-          <input id="number-field" type="text" value={this.state.display} onChange={this.setNumber}/>
+          <input id="number-field" type="text" readOnly value={this.state.display}/>
         </div>
           <br/>
         <div className="buttons" >
@@ -88,8 +116,8 @@ class Calculator extends React.Component {
           <button id="subtract" className="button" onClick={this.setOperation}>-</button>
           <button id="multiply" className="button" onClick={this.setOperation}>x</button>
           <button id="divide" className="button" onClick={this.setOperation}>/</button>
-          <button className="button" onClick={this.clear}>CLR</button>
-          <button className="button" onClick={this.calculate}>=</button>
+          <button id="clear" className="button" onClick={this.clear}>CLR</button>
+          <button id="equals" className="button" onClick={this.calculate}>=</button>
         </div>
       </div>
     );
