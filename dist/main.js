@@ -70,85 +70,102 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
 
     _this = _super.call(this, props);
     _this.state = {
-      number: '',
-      accumulator: 0,
-      display: '',
-      operation: null
+      display: ''
     };
+    _this.operationSet = false;
     _this.setOperation = _this.setOperation.bind(_assertThisInitialized(_this));
     _this.calculate = _this.calculate.bind(_assertThisInitialized(_this));
     _this.calculated = false;
     _this.clear = _this.clear.bind(_assertThisInitialized(_this));
     _this.bindKeys = _this.bindKeys.bind(_assertThisInitialized(_this));
-    _this.operations = [_this.add.bind(_assertThisInitialized(_this)), _this.subtract.bind(_assertThisInitialized(_this)), _this.multiply.bind(_assertThisInitialized(_this)), _this.divide.bind(_assertThisInitialized(_this))];
-    _this.indexKey = {
-      add: 0,
-      subtract: 1,
-      multiply: 2,
-      divide: 3
-    };
     return _this;
   }
 
   _createClass(Calculator, [{
-    key: "add",
-    value: function add(acc, num) {
-      return acc + num;
-    }
-  }, {
-    key: "subtract",
-    value: function subtract(acc, num) {
-      return acc - num;
-    }
-  }, {
-    key: "multiply",
-    value: function multiply(acc, num) {
-      return acc * num;
-    }
-  }, {
-    key: "divide",
-    value: function divide(acc, num) {
-      return acc / num;
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      document.querySelector('.container').focus();
     }
   }, {
     key: "setOperation",
     value: function setOperation(e) {
-      this.calculated = false;
-      var acc = this.state.accumulator || parseFloat(this.state.number);
+      var _ref = [this.state.display, e.target.innerHTML],
+          display = _ref[0],
+          operator = _ref[1];
+      if (/((\W|x)\s(\W|x))$/.test(display)) return;
+      if (/(\W|x)$/.test(display) && operator !== '-') return;
+      if (!display && operator !== '-') return;
+      var newVal;
+
+      if (!display && operator === '-') {
+        newVal = '-';
+      } else if (/(\d\s(\W|x){1})$/.test(display) && operator === '-') {
+        newVal = "".concat(display, " -");
+      } else {
+        newVal = "".concat(display, " ").concat(operator);
+        this.operationSet = true;
+      }
+
       this.setState({
-        operation: e.target.id,
-        display: '',
-        accumulator: acc
+        display: newVal
       });
+      this.calculated = false;
     }
   }, {
     key: "calculate",
     value: function calculate() {
-      if (this.state.operation === null) return;
-      var acc = this.state.accumulator;
-      var num = parseFloat(this.state.number);
-      var opIdx = this.indexKey[this.state.operation];
-      var operation = this.operations[opIdx];
-      var newAcc = operation(acc, num);
+      if (!this.operationSet) return;
+      if (/(\W|x)$/.test(this.state.display)) return;
+      var result = eval("".concat(this.state.display).replace(/x/, '*'));
+      result = /\d$/.test(result) ? result : result.substring(0, result.length - 2);
       this.calculated = true;
       this.setState({
-        accumulator: newAcc,
-        display: "".concat(newAcc)
+        display: "".concat(result)
       });
     }
   }, {
     key: "clear",
     value: function clear() {
       this.setState({
-        number: '',
-        accumulator: 0,
         display: ''
       });
     }
   }, {
+    key: "newDisplayVal",
+    value: function newDisplayVal(num) {
+      var newVal;
+
+      if (this.calculated) {
+        newVal = "".concat(num);
+      } else if (this.state.display === '-') {
+        newVal = "-".concat(num);
+      } else if (/(\W|x)\s\-$/.test(this.state.display)) {
+        newVal = "".concat(this.state.display).concat(num);
+      } else if (/(\W|x)$/.test(this.state.display)) {
+        newVal = "".concat(this.state.display, " ").concat(num);
+      } else {
+        newVal = "".concat(this.state.display).concat(num);
+      }
+
+      return newVal;
+    }
+  }, {
+    key: "numericInput",
+    value: function numericInput(e) {
+      for (var n = 0; n < 10; n++) {
+        if ("".concat(n) === e.key) {
+          var newVal = this.newDisplayVal(n);
+          this.setState({
+            display: newVal
+          });
+          this.calculated = false;
+        }
+      }
+    }
+  }, {
     key: "bindKeys",
     value: function bindKeys(e) {
-      e.preventDefault();
+      if (e.key === '0' && this.state.display === '') return;
       var buttons = Array.from(document.getElementsByClassName('button'));
 
       if (['=', '-', '+', '/'].includes(e.key)) {
@@ -174,42 +191,24 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
         case '.':
           if (this.state.display.includes('.')) return;
           var newVal = this.calculated || !this.state.display ? '0.' : "".concat(this.state.display, ".");
-          var acc = this.calculated ? 0 : this.state.accumulator;
           this.setState({
-            number: newVal,
-            display: newVal,
-            accumulator: acc
+            display: newVal
           });
           this.calculated = false;
           return;
       }
 
-      for (var n = 0; n < 10; n++) {
-        if ("".concat(n) === e.key) {
-          var _newVal = this.calculated ? "".concat(n) : "".concat(this.state.display).concat(n);
-
-          var _acc = this.calculated ? 0 : this.state.accumulator;
-
-          this.setState({
-            number: _newVal,
-            display: _newVal,
-            accumulator: _acc
-          });
-          this.calculated = false;
-          return;
-        }
-      }
+      this.numericInput(e);
     }
   }, {
     key: "render",
     value: function render() {
-      var _this$state = this.state,
-          number = _this$state.number,
-          accumulator = _this$state.accumulator;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        className: "calculator",
+        className: "container",
         tabIndex: "0",
         onKeyDown: this.bindKeys
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "AN ACTUAL CALCULATOR"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        className: "calculator"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         className: "number_field"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
@@ -243,7 +242,7 @@ var Calculator = /*#__PURE__*/function (_React$Component) {
         id: "equals",
         className: "button",
         onClick: this.calculate
-      }, "=")));
+      }, "="))));
     }
   }]);
 
@@ -273,7 +272,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "html, head, body, div, input, button {\n  margin: 0;\n\tpadding: 0;\n\tborder: 0;\n\tfont-size: 100%;\n\tfont: inherit;\n}\n\n.calculator {\n  margin: auto;\n  border: 1px solid black;\n}\n\n.number_field {\n  width: 450px;\n  margin: auto;\n  border: 1px solid black;\n}\n\n.buttons {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  width: 450px;\n  margin: auto;\n  border: 1px solid black;\n}\n\n.button {\n  height: 150px;\n  width: 150px;\n  border: 1px solid black;\n}\n\n.button:focus {\n  outline: 0;\n}\n\n.button:hover {\n  background-color: black;\n  color: white;\n}\n\n.number_field > input {\n  width: 450px;\n}", "",{"version":3,"sources":["webpack://./src/calculator.css"],"names":[],"mappings":"AAAA;EACE,SAAS;CACV,UAAU;CACV,SAAS;CACT,eAAe;CACf,aAAa;AACd;;AAEA;EACE,YAAY;EACZ,uBAAuB;AACzB;;AAEA;EACE,YAAY;EACZ,YAAY;EACZ,uBAAuB;AACzB;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,eAAe;EACf,YAAY;EACZ,YAAY;EACZ,uBAAuB;AACzB;;AAEA;EACE,aAAa;EACb,YAAY;EACZ,uBAAuB;AACzB;;AAEA;EACE,UAAU;AACZ;;AAEA;EACE,uBAAuB;EACvB,YAAY;AACd;;AAEA;EACE,YAAY;AACd","sourcesContent":["html, head, body, div, input, button {\n  margin: 0;\n\tpadding: 0;\n\tborder: 0;\n\tfont-size: 100%;\n\tfont: inherit;\n}\n\n.calculator {\n  margin: auto;\n  border: 1px solid black;\n}\n\n.number_field {\n  width: 450px;\n  margin: auto;\n  border: 1px solid black;\n}\n\n.buttons {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  width: 450px;\n  margin: auto;\n  border: 1px solid black;\n}\n\n.button {\n  height: 150px;\n  width: 150px;\n  border: 1px solid black;\n}\n\n.button:focus {\n  outline: 0;\n}\n\n.button:hover {\n  background-color: black;\n  color: white;\n}\n\n.number_field > input {\n  width: 450px;\n}"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "html, head, body, div, input, button {\n  margin: 0;\n\tpadding: 0;\n\tborder: 0;\n\tfont-size: 100%;\n\tfont: inherit;\n}\n\n.container:focus, .calculator:focus, .button:focus, input:focus {\n  outline: 0;\n}\n\n.container {\n  height: 100vh;\n  background-color: #000000;\n}\n\n.calculator {\n  position: relative;\n  top: 150px;\n  width: 500px;\n  height: 500px;\n  padding-top: 30px;\n  margin: auto;\n  background-color: gray;\n  border: 2px solid white;\n  border-radius: 5%;\n}\n\n.number_field {\n  width: 450px;\n  margin: auto;\n}\n\ninput {\n  border: 2px solid black;\n  width: 450px;\n  height: 50px;\n  font-size: xx-large;\n}\n\nh1 {\n  top: 50px;\n  color: white;\n  position: relative;\n  display: flex;\n  justify-content: center;\n  width: 500px;\n  height: 50px;\n  margin: auto;\n}\n\n.buttons {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  width: 450px;\n  margin: auto;\n}\n\n.button {\n  height: 150px;\n  width: 150px;\n  border: 2px solid black;\n  border-radius: 10%;\n  box-shadow: 5px 5px black; \n}\n\n.button:hover {\n  background-color: black;\n  color: white;\n}\n\n\n", "",{"version":3,"sources":["webpack://./src/calculator.css"],"names":[],"mappings":"AAAA;EACE,SAAS;CACV,UAAU;CACV,SAAS;CACT,eAAe;CACf,aAAa;AACd;;AAEA;EACE,UAAU;AACZ;;AAEA;EACE,aAAa;EACb,yBAAyB;AAC3B;;AAEA;EACE,kBAAkB;EAClB,UAAU;EACV,YAAY;EACZ,aAAa;EACb,iBAAiB;EACjB,YAAY;EACZ,sBAAsB;EACtB,uBAAuB;EACvB,iBAAiB;AACnB;;AAEA;EACE,YAAY;EACZ,YAAY;AACd;;AAEA;EACE,uBAAuB;EACvB,YAAY;EACZ,YAAY;EACZ,mBAAmB;AACrB;;AAEA;EACE,SAAS;EACT,YAAY;EACZ,kBAAkB;EAClB,aAAa;EACb,uBAAuB;EACvB,YAAY;EACZ,YAAY;EACZ,YAAY;AACd;;AAEA;EACE,aAAa;EACb,mBAAmB;EACnB,eAAe;EACf,YAAY;EACZ,YAAY;AACd;;AAEA;EACE,aAAa;EACb,YAAY;EACZ,uBAAuB;EACvB,kBAAkB;EAClB,yBAAyB;AAC3B;;AAEA;EACE,uBAAuB;EACvB,YAAY;AACd","sourcesContent":["html, head, body, div, input, button {\n  margin: 0;\n\tpadding: 0;\n\tborder: 0;\n\tfont-size: 100%;\n\tfont: inherit;\n}\n\n.container:focus, .calculator:focus, .button:focus, input:focus {\n  outline: 0;\n}\n\n.container {\n  height: 100vh;\n  background-color: #000000;\n}\n\n.calculator {\n  position: relative;\n  top: 150px;\n  width: 500px;\n  height: 500px;\n  padding-top: 30px;\n  margin: auto;\n  background-color: gray;\n  border: 2px solid white;\n  border-radius: 5%;\n}\n\n.number_field {\n  width: 450px;\n  margin: auto;\n}\n\ninput {\n  border: 2px solid black;\n  width: 450px;\n  height: 50px;\n  font-size: xx-large;\n}\n\nh1 {\n  top: 50px;\n  color: white;\n  position: relative;\n  display: flex;\n  justify-content: center;\n  width: 500px;\n  height: 50px;\n  margin: auto;\n}\n\n.buttons {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  width: 450px;\n  margin: auto;\n}\n\n.button {\n  height: 150px;\n  width: 150px;\n  border: 2px solid black;\n  border-radius: 10%;\n  box-shadow: 5px 5px black; \n}\n\n.button:hover {\n  background-color: black;\n  color: white;\n}\n\n\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

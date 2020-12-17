@@ -6,15 +6,48 @@ html, head, body, div, input, button {
 	font: inherit;
 }
 
+.container:focus, .calculator:focus, .button:focus, input:focus {
+  outline: 0;
+}
+
+.container {
+  height: 100vh;
+  background-color: #000000;
+}
+
 .calculator {
+  position: relative;
+  top: 150px;
+  width: 500px;
+  height: 500px;
+  padding-top: 30px;
   margin: auto;
-  border: 1px solid black;
+  background-color: gray;
+  border: 2px solid white;
+  border-radius: 5%;
 }
 
 .number_field {
   width: 450px;
   margin: auto;
-  border: 1px solid black;
+}
+
+input {
+  border: 2px solid black;
+  width: 450px;
+  height: 50px;
+  font-size: xx-large;
+}
+
+h1 {
+  top: 50px;
+  color: white;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 500px;
+  height: 50px;
+  margin: auto;
 }
 
 .buttons {
@@ -23,17 +56,14 @@ html, head, body, div, input, button {
   flex-wrap: wrap;
   width: 450px;
   margin: auto;
-  border: 1px solid black;
 }
 
 .button {
   height: 150px;
   width: 150px;
-  border: 1px solid black;
-}
-
-.button:focus {
-  outline: 0;
+  border: 2px solid black;
+  border-radius: 10%;
+  box-shadow: 5px 5px black; 
 }
 
 .button:hover {
@@ -41,6 +71,4 @@ html, head, body, div, input, button {
   color: white;
 }
 
-.number_field > input {
-  width: 450px;
-}
+
